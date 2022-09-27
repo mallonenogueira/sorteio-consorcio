@@ -1,0 +1,13 @@
+$blue_100: hsl(209, 23%, 22%);
+$blue_200: hsl(207, 26%, 17%);
+$blue_300: hsl(200, 15%, 8%);
+
+$gray_100: hsl(0, 0%, 98%);
+$gray_200: hsl(0, 0%, 52%);
+
+$magenta_300: #fb7ec1;
+
+$white: hsl(0, 0%, 100%);
+
+$box-shadow-color-95: transparentize($blue_300, 0.95);
+$box-shadow-color-90: transparentize($blue_300, 0.9);
