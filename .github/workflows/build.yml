@@ -27,8 +27,7 @@ jobs:
         yarn
         yarn build
   
-    - name: Upload GitHub Pages artifact
-      uses: actions/upload-pages-artifact@v1.0.4
+    - name: Build Jekyll for GitHub Pages
+      uses: actions/jekyll-build-pages@v1.0.5
       with:
-        # Path of the directory containing the static assets.
-        path: dist
+        destination: dist # optional, default is ./_site
