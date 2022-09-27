@@ -26,3 +26,9 @@ jobs:
       run: |
         yarn
         yarn build
+  
+    - name: Upload GitHub Pages artifact
+      uses: actions/upload-pages-artifact@v1.0.4
+      with:
+        # Path of the directory containing the static assets.
+        path: dist
