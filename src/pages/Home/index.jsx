@@ -1,8 +1,6 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { add } from "date-fns";
-import { Button } from "../../components/Button";
 import { Header } from "../../components/Header";
-import { Flex } from "../../components/Flex";
 import { Animated } from "react-animated-css";
 
 function shuffle(array) {
@@ -142,7 +140,7 @@ function Dates({ dates, onBack }) {
       <br />
       <br />
 
-      <Button onClick={onBack}>Voltar</Button>
+      <button onClick={onBack}>Voltar</button>
     </>
   );
 }
