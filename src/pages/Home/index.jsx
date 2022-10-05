@@ -1,82 +1,101 @@
 import { useRef, useState } from "react";
 import { add } from "date-fns";
 import { Button } from "../../components/Button";
-import { Input } from "../../components/Input";
-import "./style.scss";
 import { Header } from "../../components/Header";
-import { Container } from "../../components/Container";
 import { Flex } from "../../components/Flex";
 import { Animated } from "react-animated-css";
 
-const KEY_ENTER = "Enter";
-
 function shuffle(array) {
-  return [...array]
-    .sort(() => Math.random() - 0.5)
-    .sort(() => Math.random() - 0.5)
-    .sort(() => Math.random() - 0.5)
-    .sort(() => Math.random() - 0.5);
+  // return [...array]
+  //   .sort(() => Math.random() - 0.5)
+  //   .sort(() => Math.random() - 0.5)
+  //   .sort(() => Math.random() - 0.5)
+  //   .sort(() => Math.random() - 0.5);
+
+  let newArray = [...array];
+
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = newArray[i];
+    newArray[i] = newArray[j];
+    newArray[j] = temp;
+  }
+
+  return newArray;
 }
 
 function Form({ handleSubmit, initialNames, initialDate }) {
-  const inputRef = useRef();
   const [names, setNames] = useState(initialNames);
-  const [name, setName] = useState("");
   const [date, setDate] = useState(initialDate);
-
-  function addName() {
-    if (!name.trim()) {
-      return;
-    }
-
-    setNames((n) => [...n, name.trim()]);
-    setName("");
-
-    inputRef.current.focus();
-  }
 
   return (
     <>
-      <Flex alignItems="flex-end" gap={10}>
-        <Input
-          label="Nome"
-          value={name}
-          inputRef={inputRef}
-          onChange={(event) => setName(event.target.value)}
-          onKeyUp={(event) => event.key === KEY_ENTER && addName()}
+      <label className="flex flex-col w-full">
+        Nomes
+        <textarea
+          rows="10"
+          className="
+            w-full 
+            shadow-sm
+            outline-none
+            border
+            border-solid
+            focus:border-indigo-500 
+            border-gray-300 
+            rounded-md
+            mt-1
+            p-4 
+            min-h-[20rem]
+          "
+          value={names}
+          onChange={(event) => setNames(event.target.value)}
         />
+      </label>
 
-        <Button onClick={addName}>Adicionar</Button>
-      </Flex>
+      <label className="flex flex-col w-full">
+        Mês de início
+        <input
+          className="
+            w-full 
+            h-12
+            shadow-sm
+            outline-none
+            border
+            border-solid
+            focus:border-indigo-500 
+            border-gray-300 
+            rounded-md
+            mt-1 
+            p-4
+          "
+          type="month"
+          value={date}
+          onChange={(event) => setDate(event.target.value)}
+        />
+      </label>
 
-      <Input
-        label="Mês de início"
-        type="month"
-        value={date}
-        onChange={(event) => setDate(event.target.value)}
-      />
-
-      <Button onClick={() => handleSubmit(names, date)}>Sortear</Button>
-
-      <h2>Nomes</h2>
-
-      <ul className="list-names">
-        {names.map((n, index) => (
-          <li key={index}>
-            {n}
-            <Button
-              onClick={() => {
-                setNames((n) => [
-                  ...n.slice(0, index),
-                  ...n.slice(index + 1, n.length),
-                ]);
-              }}
-            >
-              Remover
-            </Button>
-          </li>
-        ))}
-      </ul>
+      <button
+        onClick={() => handleSubmit(names, date)}
+        className="
+          flex
+          justify-center
+          items-center
+          w-full 
+          h-12
+          shadow-md
+          outline-none
+          focus:bg-indigo-600
+          active:bg-indigo-400
+          border-gray-300 
+          bg-indigo-500
+          text-white
+          rounded-md
+          mt-1 
+          p-4
+        "
+      >
+        Sortear
+      </button>
     </>
   );
 }
@@ -84,7 +103,27 @@ function Form({ handleSubmit, initialNames, initialDate }) {
 function Dates({ dates, onBack }) {
   return (
     <>
-      <ul className="list">
+      <ul className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {dates.map((data, index) => (
+          <li className="w-full rounded-lg border border-gray-200 shadow-md flex flex-col items-center p-6 relative">
+            <span className="absolute top-5 left-5 text-indigo-500 font-bold">
+              {index + 1}
+            </span>
+
+            <h5 className="mb-1 text-2xl font-medium text-gray-900 ">
+              {data.name}
+            </h5>
+
+            <span className="text-md">
+              {data.date.toLocaleString("pt-br", {
+                year: "numeric",
+                month: "long",
+              })}
+            </span>
+          </li>
+        ))}
+      </ul>
+      {/* <ul className="list">
         {dates.map((data, index) => (
           <li key={index} className="card">
             <div className="card__content">
@@ -93,15 +132,12 @@ function Dates({ dates, onBack }) {
               </strong>
 
               <span>
-                {data.date.toLocaleString("pt-br", {
-                  year: "numeric",
-                  month: "long",
-                })}
+                
               </span>
             </div>
           </li>
         ))}
-      </ul>
+      </ul> */}
 
       <br />
       <br />
@@ -120,12 +156,18 @@ export function Home() {
 
   function handleSubmit(names, date) {
     const initialDate = new Date(date.split("-"));
-    const shuffledNames = shuffle(names);
+    const shuffledNames = shuffle(
+      names
+        .split(/[\n,]/)
+        .map((s) => s.trim())
+        .filter((s) => s)
+    );
 
     setOld({
       initialNames: names,
       initialDate: date,
     });
+
     setDates([
       ...shuffledNames.map((n, index) => ({
         date: add(initialDate, {
@@ -140,17 +182,19 @@ export function Home() {
     <>
       <Header />
 
-      <Container>
-        <Flex gap={20} direction="column">
-          {!dates.length && <Form {...old} handleSubmit={handleSubmit} />}
+      <div className="container w-full flex mx-auto pt-40">
+        <div className="w-full p-8 mt-6 bg-white border shadow-md">
+          <div className="flex flex-col gap-5">
+            {!dates.length && <Form {...old} handleSubmit={handleSubmit} />}
 
-          {!!dates.length && (
-            <Animated animationIn="fadeIn" isVisible={!!dates.length}>
-              <Dates dates={dates} onBack={() => setDates([])} />
-            </Animated>
-          )}
-        </Flex>
-      </Container>
+            {!!dates.length && (
+              <Animated animationIn="fadeIn" isVisible={!!dates.length}>
+                <Dates dates={dates} onBack={() => setDates([])} />
+              </Animated>
+            )}
+          </div>
+        </div>
+      </div>
     </>
   );
 }
